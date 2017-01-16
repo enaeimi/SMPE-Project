@@ -1,2 +1,2 @@
 # SMPE-Project
-This is about set of data collected from group of students who tried an HCI(Human Computer Interaction) project
+This data set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner ‘Titanic’, summarized according to economic status (class), sex, age and survival.
