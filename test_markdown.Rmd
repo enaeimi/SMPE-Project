@@ -1,0 +1,64 @@
+---
+title: "Test_markdown"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+## Testing Rstudio and gg2plot
+```{r loading data}
+library(ggplot2)
+library(plyr)
+library(reshape2)
+
+setwd("SMPE_bailly")
+my_data = read.csv("Data/Mroz.csv");
+str(my_data)
+
+qplot(data=my_data, x=agew, y=wagew, main="Basic qplot")
+
+```
+Just a basic qplot here, from which it is hard to see anything. Two phenomenons are still interesting: the rarity of very high wages (not really a surprise), and some wages equal to 0. 
+Let's see if we can do better.
+
+```{r explore}
+qplot(data=my_data, x=agew, y=wagew, color=work, main="Basic qplot")
+```
+With colours, it is a little bit better. What is unexpected is the very low number of women who were working. Worst, most of those who participated in the labor-force were not payed! That is strange, for sure, but it is not a mistake (we did not inverted the two), this is really what is in the dataset.
+
+Nevermind, we will see that later. 
+
+```{r wage_and_experience1}
+
+ggplot(data=my_data, aes(x=experience, y=wagew, group=experience)) +geom_boxplot()
+
+```
+Well, since x is continuous it is not really nice ...
+
+```{r wage_and_experience2}
+exp_cat <- cut(my_data$experience, seq(0, 40, 10))
+ggplot(data=my_data, aes(x=exp_cat, y=wagew, group=experience)) +geom_boxplot()
+```
+
+```{r wage_and_experience3}
+p <- ggplot(data=my_data, aes(x=experience, y=wagew, group=experience)) +geom_boxplot()
+
+p <- p + scale_x_continuous(name = "Years of experience",
+                              breaks = seq(0, 40, 5),
+                              limits=c(0, 40))
+p
+```
+On the road again, again... But this time, we will eliminate those who don't work
+
+LITTLE TRICK: since it seems work and no work are inverted...
+```{r wage_and_experience4}
+p <- ggplot(data=my_data[my_data$work=="no", ], aes(x=experience, y=wagew, group=experience)) +geom_boxplot()
+p
+```
+Well, we have something ok here! Not sure we can conclude anything, but still, enough for today.
+
