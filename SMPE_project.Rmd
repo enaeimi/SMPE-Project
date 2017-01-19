@@ -1,6 +1,8 @@
 ---
-title: ""
-output: html_document
+title: ''
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -38,7 +40,7 @@ Since there is a lot of information in the dataset (18 variables), We first plot
 library(ggplot2)
 library(plyr)
 library(reshape2)
-my_data = read.csv("C:/Users/Charles/Documents/SMPE_bailly/Data/Mroz.csv")
+my_data = read.csv("Mroz.csv")
 
 # Not all columns are inreresting to sum up (too much otherwise)
 # Here, we focus on columns about women
@@ -59,7 +61,7 @@ According to the colour mapping, it seems that most of women who were not workin
 We quickly discussed about this phenomenon, and also linked it with the number of hours worked. The result was the same: nearly all women without job had a lot of hours worked, and those with a professional activity didn't (0 most of the time). Therefore, we finally decided to consider it as an error in the raw data, and worked on a cleaned version of it.
 
 ```{r Loading correct data}
-data_clean = read.csv("C:/Users/Charles/Documents/SMPE_bailly/Data/Mroz_cleaned.csv")
+data_clean = read.csv("Mroz_cleaned.csv")
 ```
 
 # Experience and wage
@@ -151,7 +153,7 @@ We expected a much greater correlation between age and experience. If we conside
 
 
 
-# Comparing wifes and husbands
+# Comparing wives and husbands
 
 Our third focus was about the wage of women and husbands.
 ```{r Stats W vs H, echo=FALSE}
@@ -228,7 +230,60 @@ ggplot(data=working_w, aes(x=wagew, y=wageh , group=cut_interval(x=wagew, length
 
 Neither boxplots nor linear regression allow us to conclude anything about a precise relation between the wage of women and the one of their husband.
 
+# Comparing work and children
 
+We were curious to see whether or not the amount of work done by the husband and wife have any effect on the children that the couple have. But first, we wanted to see what the total amount of children in a household was. In our data, we have the information regarding children aged from 0 to 5 years old, and 6 to 18 years old. We grouped them together to get this information.
+
+```{r children_amount}
+ 
+
+#ggplot(subset(data.m, value > 0), aes(x = value, y = variable, fill=variable)) + geom_bar(stat = "identity") + xlab("Number of children in Family") +ylab("Count")
+
+ggplot(my_data, aes(child6+child618)) + geom_bar()
+
+```
+
+In the previous figure, we can see that the majority of the families do not have any children. Based on our initial quest to find a relationship between work and children, it would be very interesting to see whether or not this big group of families do not have children due to the work hours they are doing.
+
+We continued by plotting the amount of work hours done by the husband, the wife, and both, to see if one, both, or none of their work hours have any effect on the amount of children in the household.
+
+```{r children_vs_workamount}
+
+ggplot(my_data, aes( factor(ifelse((child6+child618) > 0, 1, 0)), hoursh)) + geom_violin(scale="area") + xlab("Children in the family (yes = 1/no = 0)") + ylab("Hours worked by husband")
+
+cor(my_data$hoursw,ifelse((my_data$child6+my_data$child618) > 0, 1, 0))
+
+ggplot(my_data, aes( factor(ifelse((child6+child618) > 0, 1, 0)), hoursw)) + geom_violin(scale="area") + xlab("Children in the family (yes = 1/no = 0)") + ylab("Hours worked by wife")
+
+cor(my_data$hoursh,ifelse((my_data$child6+my_data$child618) > 0, 1, 0))
+
+ggplot(my_data, aes( factor(ifelse((child6+child618) > 0, 1, 0)), hoursw+hoursh)) + geom_violin(scale="area") + xlab("Children in the family (yes = 1/no = 0)") + ylab("Hours worked by both husband and wife")
+cor((my_data$hoursh + my_data$hoursw),ifelse((my_data$child6+my_data$child618) > 0, 1, 0))
+
+
+
+```
+In the first graph of hours worked by the husband, we failed to see any relationship between the amount of work, and whether or not the family has children. Although we did not find a way to compare the violin plots from the husband graph with something similar to a confidence interval, we find it interesting to see that the graph of those men with children is slightly more stretched towards the top, meaning that men with children would have a slightly higher workload. 
+
+The second graph represents the hours worked by the women, and whether or not they have children. We can immediately see that both plots for the women (with and without children) are significantly lower than those for their husbands. We interpreted this as women having either no work, or less workload, but just based on this we cannot certainly say that work results in no children. As with the previous plot, we did not find a way to make a confidence interval comparison between both women with children, and those without. However, we found it interesting that contrary to men, and as we expected, women without children work more than those with children.
+
+We finally added a third graph comparing the amount of children in a household against the amount of hours worked by both the husband and the wife. We can observe that there is a very similar amount of activity done by both groups, probably because of the inverse work responsability done by husband and wife, where husbands work more when there are children, and women work more when there are no children. 
+
+Finally, we were interested in observing whether the amount of work has an impact on the amount of children in a family:
+
+```{r Workamount_vs_childrenamount}
+
+
+ggplot(my_data, aes( factor(child6+child618), hoursw)) + geom_boxplot() + xlab("Amount of Children") + ylab("Hours worked by wife")
+ggplot(my_data, aes( factor(child6+child618), hoursh)) + geom_boxplot() + xlab("Amount of Children") + ylab("Hours worked by husband")
+
+cor(my_data$hoursw, my_data$child6 + my_data$child618 )
+cor(my_data$hoursh, my_data$child6 + my_data$child618 )
+```
+
+In the first graph, were we compare the amount of children against the hours worked by the wife. We observe that, although some outliers exist, that as the amount of children in the family increases, the hours worked by women decrease. This is not true however for the case of 6 children. On the first graph, we compare the amount of children against the hours worked by the husband. We can observe that there is a slight increase in workload as the amount of children increase.
+
+During this analysis, we saw how women with children tend to work less than those without, and alternatively men with children work more than those without. We then show how this same pattern can be seen in the amount of children in a family, more so on women than on men. To answer our inital question of whether the amount of work has an impact on the amount of children in a family, we converge to the idea that the effect is the other way around, where children have an effect on the amount of workload the parents have.
 
 # References
 [1] T. A. Mroz (1987) _The sensitivity of an empirical model of married women's hours of work to economic and statistical assumptions_. Econometrica 55, 765–799
