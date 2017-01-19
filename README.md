@@ -6,7 +6,8 @@ Using R, we studied the influence of several factors on wages, correlations betw
 Do women with children work less? Is working experience linked with wage? Continue reading to see more!
 
 ## Usage
-A R markdown is available on this Git repository(SMPE_Project.Rmd), but you may also to directly see the PDF version(SMPE_Project.pdf).
+A R markdown is available on this Git repository (SMPE_Project.Rmd) to let you redo our experiments, but the online version does not display graphs, which is annoying.
+This is why we encourage you to see the PDF file for reading our work.
 If you are curious about our data, the two csv files are available on the Data directory.
 
 ## References
