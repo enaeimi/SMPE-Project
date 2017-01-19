@@ -40,7 +40,7 @@ Since there is a lot of information in the dataset (18 variables), We first plot
 library(ggplot2)
 library(plyr)
 library(reshape2)
-my_data = read.csv("Data/Mroz.csv")
+my_data = read.csv("./Data/Mroz.csv")
 
 # Not all columns are inreresting to sum up (too much otherwise)
 # Here, we focus on columns about women
@@ -61,7 +61,7 @@ According to the colour mapping, it seems that most of women who were not workin
 We quickly discussed about this phenomenon, and also linked it with the number of hours worked. The result was the same: nearly all women without job had a lot of hours worked, and those with a professional activity didn't (0 most of the time). Therefore, we finally decided to consider it as an error in the raw data, and worked on a cleaned version of it.
 
 ```{r Loading correct data}
-data_clean = read.csv("Data/Mroz_cleaned.csv")
+data_clean = read.csv("./Data/Mroz_cleaned.csv")
 ```
 
 # Experience and wage
@@ -237,9 +237,7 @@ We were curious to see whether or not the amount of work done by the husband and
 ```{r children_amount}
  
 
-#ggplot(subset(data.m, value > 0), aes(x = value, y = variable, fill=variable)) + geom_bar(stat = "identity") + xlab("Number of children in Family") +ylab("Count")
-
-ggplot(my_data, aes(child6+child618)) + geom_bar()
+ggplot(my_data, aes(child6+child618)) + geom_bar() + xlab("Number of Children in Family") +ylab("Count")
 
 ```
 
