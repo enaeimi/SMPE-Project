@@ -153,7 +153,7 @@ We expected a much greater correlation between age and experience. If we conside
 
 
 
-# Comparing wives and husbands
+# Comparing wage of wives and husbands
 
 Our third focus was about the wage of women and husbands.
 ```{r Stats W vs H, echo=FALSE}
@@ -192,6 +192,7 @@ There are several things to say here.
 <li>First, the x_axis of the two graph is not the same.</li>
 <li>Then, the data for husbands seems to correspond to a normal distribution, while for women we don't really know.</li>
 <li>We can see than a lot of husbands earn more money than there wifes indeed, which was one of our hypothesis.</li>
+<li>We also noticed that there are many women working without wage (wage=0) and mean wage for husbands( about 8 ) is 4 time bigger than mean wage for wives (about 2 )</li>
 </ul>
 
 
