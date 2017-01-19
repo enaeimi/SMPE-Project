@@ -1,47 +1,16 @@
-# SMPE-Project
+# SMPE-Project: U.S. Women's Labor-Force Participation
 
-U.S. Women's Labor-Force Participation
+## In a few words
+We worked on a dataset about women's work in the USA (in 1978). 
+Using R, we studied the influence of several factors on wages, correlations between attributes and comparisons between women and husbands.
+Do women with children work less? Is working experience linked with wage? Continue reading to see more!
 
-Description
+## Usage
+A R markdown is available on this Git repository(SMPE_Project.Rmd), but you may also to directly see the PDF version(SMPE_Project.pdf).
+If you are curious about our data, the two csv files are available on the Data directory.
 
-The Mroz data frame has 753 rows and 8 columns. The observations, from the Panel Study of Income Dynamics (PSID), are married women.
-
-Usage
-
-Mroz
-Format
-
-This data frame contains the following columns:
-
-lfp
-labor-force participation; a factor with levels: no; yes.
-
-k5
-number of children 5 years old or younger.
-
-k618
-number of children 6 to 18 years old.
-
-age
-in years.
-
-wc
-wife's college attendance; a factor with levels: no; yes.
-
-hc
-husband's college attendance; a factor with levels: no; yes.
-
-lwg
-log expected wage rate; for women in the labor force, the actual wage rate; for women not in the labor force, an imputed value based on the regression of lwg on the other variables.
-
-inc
-family income exclusive of wife's income.
-
-Source
-
+## References
 Mroz, T. A. (1987) The sensitivity of an empirical model of married women's hours of work to economic and statistical assumptions. Econometrica 55, 765–799.
-
-References
 
 Fox, J. (2008) Applied Regression Analysis and Generalized Linear Models, Second Edition. Sage.
 

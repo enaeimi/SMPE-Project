@@ -40,7 +40,7 @@ Since there is a lot of information in the dataset (18 variables), We first plot
 library(ggplot2)
 library(plyr)
 library(reshape2)
-my_data = read.csv("Mroz.csv")
+my_data = read.csv("Data/Mroz.csv")
 
 # Not all columns are inreresting to sum up (too much otherwise)
 # Here, we focus on columns about women
@@ -61,7 +61,7 @@ According to the colour mapping, it seems that most of women who were not workin
 We quickly discussed about this phenomenon, and also linked it with the number of hours worked. The result was the same: nearly all women without job had a lot of hours worked, and those with a professional activity didn't (0 most of the time). Therefore, we finally decided to consider it as an error in the raw data, and worked on a cleaned version of it.
 
 ```{r Loading correct data}
-data_clean = read.csv("Mroz_cleaned.csv")
+data_clean = read.csv("Data/Mroz_cleaned.csv")
 ```
 
 # Experience and wage
@@ -283,8 +283,15 @@ cor(my_data$hoursh, my_data$child6 + my_data$child618 )
 
 In the first graph, were we compare the amount of children against the hours worked by the wife. We observe that, although some outliers exist, that as the amount of children in the family increases, the hours worked by women decrease. This is not true however for the case of 6 children. On the first graph, we compare the amount of children against the hours worked by the husband. We can observe that there is a slight increase in workload as the amount of children increase.
 
-During this analysis, we saw how women with children tend to work less than those without, and alternatively men with children work more than those without. We then show how this same pattern can be seen in the amount of children in a family, more so on women than on men. To answer our inital question of whether the amount of work has an impact on the amount of children in a family, we converge to the idea that the effect is the other way around, where children have an effect on the amount of workload the parents have.
+During this analysis, we saw how women with children tend to work less than those without, and alternatively men with children work more than those without. We then show how this same pattern can be seen in the amount of children in a family, more so on women than on men. To answer our inital question of whether the amount of work has an impact on the amount of children in a family, we converge to the idea that the effect is the other way around, where children have an effect on the amount of workload the parents have. 
+
+
+
+# Conclusion
+We explored the dataset trying to confirm our hypothesis, but it was not so easy. We were not able to prove that Women with working experience have higher wages than those who don't have, which was our first hypothesis. However, we saw that women are less payed than their husbands, and that children impact the number of working hours of their parents. 
+
+
 
 # References
-[1] T. A. Mroz (1987) _The sensitivity of an empirical model of married women's hours of work to economic and statistical assumptions_. Econometrica 55, 765–799
+[1] T. A. Mroz (1987) _The sensitivity of an empirical model of married women's hours of work to economic and statistical assumptions_. Econometrica 55, 765-799
 
