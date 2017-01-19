@@ -1,0 +1,235 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+<center>
+# U.S. Women's Labor-Force Participation 
+_Ebrahim Naehimi, Mauricio Vazquez and Charles Bailly_<br>
+_M2 MoSIG, January 2017_
+</center>
+<br><br>
+
+<p>
+Our work is based on data about the women's labor force participation in the USA. It contains information about 753 married women, collected by the Panel Study of Income Dynamics. The dataset we concretely used was extracted from a paper called _The Sensitivity of an Empirical Model of Married Women's Hours of Work to Economic and Statistical Assumptions_ [T. Mroz, 1987].
+The dataset is available on this page:<br> https://vincentarelbundock.github.io/Rdatasets/csv/car/Mroz.csv
+</p>
+
+## Dataset
+The dataset we chose contains a lot of information about these women and their husband: age, wage, education level, children, experience, husband's wage, and more. When we started to work on it, we had several basic hypothesis in mind:
+<ul>
+<li>Hypothesis 1: Women with working experience have higher wages than those who don't have.</li>
+<li>Hypothesis 2: Women earn less money than their husband</li>
+<li>Hypothesis 3: Women work less if they have children</li>
+</ul>
+
+In addition to checking these intuitions, we were also curious of what we could find by exploring the dataset.
+
+
+# First steps
+
+Since there is a lot of information in the dataset (18 variables), We first plotted a few basic statistics about the main columns: 
+```{r loading data}
+library(ggplot2)
+library(plyr)
+library(reshape2)
+my_data = read.csv("C:/Users/Charles/Documents/SMPE_bailly/Data/Mroz.csv")
+
+# Not all columns are inreresting to sum up (too much otherwise)
+# Here, we focus on columns about women
+summary(my_data[c(3, 4, 5, 6, 9, 17, 19)])
+
+```
+
+
+Then, we started creating plots to explore the dataset. However, we quickly found something strange thanks to the following one: 
+```{r First graph}
+p0 <- ggplot(data=my_data, aes(x=agew, y=wagew, color=work)) + 
+  labs(x="Age (year)", y="Wage (k$)") +
+  geom_point()
+p0
+```
+
+According to the colour mapping, it seems that most of women who were not working where earning much more money than those with a job! In fact, except for a few women, working leads to a null wage... This was unexpected for sure, so we went back to the raw data to check if anything wrong happened (a bad manipulation, for example). But no, the raw data was really this one, we didn't made an error so far. <br>
+We quickly discussed about this phenomenon, and also linked it with the number of hours worked. The result was the same: nearly all women without job had a lot of hours worked, and those with a professional activity didn't (0 most of the time). Therefore, we finally decided to consider it as an error in the raw data, and worked on a cleaned version of it.
+
+```{r Loading correct data}
+data_clean = read.csv("C:/Users/Charles/Documents/SMPE_bailly/Data/Mroz_cleaned.csv")
+```
+
+# Experience and wage
+Our first hypothesis was that experienced women earn more money than those without experience. 
+We began by creating an histogram to have an idea of the experience of women:
+
+```{r Exploring experience}
+# Stats
+median_exp <- median(data_clean$experience)
+mean_exp <- mean(data_clean$experience)
+sd_exp <- sd(data_clean$experience)
+
+#Display stats
+median_exp
+mean_exp
+sd_exp
+
+#Plot
+p1 <- ggplot(data=data_clean, aes(experience)) + 
+  geom_bar(fill="white", colour = "black") + 
+  geom_vline(xintercept = median_exp, color="red", size = 1.5) +
+  geom_vline(xintercept = mean_exp, colour = "blue", size = 1.5) + 
+  geom_vline(xintercept = mean_exp-sd_exp, colour="green") + 
+  geom_vline(xintercept = mean_exp+sd_exp, colour="green") 
+
+p1
+```
+
+In average, women had 10.6 years of working experience, but the standart deviation is quite large. We are not expert on the field, so we can't affirm that it matches with the historical reality of the USA in 1978.<br><br>
+
+Then, we did a very basic graph to see if there was an obvious relationship between experience and wage: 
+```{r Basic graph Exp/Wage}
+p2 <- ggplot(data=data_clean, aes(experience, wagew, color=work)) + 
+  geom_point() + 
+  labs(x="Experience (year)", y="Wage (k$)")
+
+p2
+```
+
+We already had the feeling that we could not fit very well a linear model on it:
+```{r Linear Model Exp/Wage}
+p3 <- ggplot(data=data_clean, aes(experience, wagew)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", color = "blue") + 
+  labs(x="Experience (year)", y="Wage (k$)")
+
+p3
+
+# Check exact correlation between the two
+cor(data_clean$experience, data_clean$wagew)
+```
+As we thought, the correlation between experience and wage is positive but quite low. <br><br>
+
+We tried another approach with boxplots:
+```{r Boxplot Exp/Wage}
+# Women who are working, without outliers(huge wages)
+data_without_hW <- subset(data_clean, data_clean$work=="yes" & data_clean$wagew<9 )
+
+p4 <- ggplot(data=data_without_hW, aes(x=experience, y=wagew, group=cut_interval(x = experience, length = 2))) + 
+  geom_boxplot() +
+  labs(x="Experience (year)", y="Wage (k$)")
+
+p4
+```
+
+At first sight, it seems that we can conclude that there are significant differentes between women who have very little experience and those who have a lot. However, the number of women with more than 30 years of experience is really limited. Therefore,it is hard to find any firm conclusion about it. 
+
+
+
+# Experience vs age
+
+The previous work was a bit unconclusive, so we tried to find some data where we hopefully could find a clearer result. We thought that experience should be somehow related to the age, and started working on it.
+```{r Exploring age}
+working_w <- subset(data_clean, data_clean$work=="yes")
+
+p5 <- ggplot(data=data_clean, aes(agew, experience)) + 
+  geom_point() + 
+  geom_smooth(color = "blue") + #loess method
+  geom_smooth(method = "lm", color="red") + 
+  labs(x="Age of women (year)", y="Experience (year)")
+
+p5
+
+cor(data_clean$agew, data_clean$experience)
+cor(working_w$agew, working_w$experience)
+```
+
+We expected a much greater correlation between age and experience. If we consider only the subset of working women, it is slightly better, but once more not enough to conclude positively. 
+
+
+
+# Comparing wifes and husbands
+
+Our third focus was about the wage of women and husbands.
+```{r Stats W vs H, echo=FALSE}
+meanw = mean(my_data$wagew)
+meanh = mean(my_data$wageh)
+
+stdw = sd(my_data$wagew)
+stdh=sd(my_data$wageh)
+
+medianw = median(my_data$wagew)
+medianh = median(my_data$wageh)
+
+```
+
+First, we tried to check if husbands earn more money or not:
+```{r}
+par(mfrow=c(1,2))
+
+hist(working_w$wageh,xlab="Husband's wage", ylab="Count", main="")
+abline(v = medianh, col = "red")
+abline(v = meanh, col = "blue")
+abline(v = meanh+stdh, col = "green", lty = 2)
+abline(v = meanh-stdh, col = "green", lty = 2)
+
+hist(working_w$wagew,xlab="Wife's wage", ylab="Count",main="")
+abline(v = medianw, col = "red")
+abline(v = meanw, col = "blue")
+abline(v = meanw+stdw, col = "green", lty = 2)
+abline(v = meanw-stdw, col = "green", lty = 2)
+legend("topright",c("median","mean","std"),col=c("red","blue","green"),lwd=2,text.font=2,cex = 0.5)
+
+```
+
+There are several things to say here. 
+<ul>
+<li>First, the x_axis of the two graph is not the same.</li>
+<li>Then, the data for husbands seems to correspond to a normal distribution, while for women we don't really know.</li>
+<li>We can see than a lot of husbands earn more money than there wifes indeed, which was one of our hypothesis.</li>
+</ul>
+
+
+Then, we tried to find a precise relation between the two, plotting both wagew and wageh together:
+```{r first plot WvsH}
+
+qplot(data=my_data ,x=wagew, y=wageh,color=work,main="Wage comparison")
+
+```
+
+It's observed that there's nothing meaningful. 
+Regarding substitution of "work" column values, we remove values having work=yes to obtain valide wages for people who are working
+
+```{r}
+qplot(data=working_w,x=wagew, y=wageh,main="Wage comparison")
+```
+
+We tried to fit a linear model, and this is what we obtained:
+
+```{r}
+ggplot(data=working_w ,aes(x=wagew, y=wageh)) + 
+  geom_smooth(method="lm") +
+  labs(x="Wage of women (k$)", y="Wage of husbands (k$)") +
+  geom_point()
+
+```
+
+
+We also tried to group data regarding wife's wage and plotted related box-plot:
+
+```{r}
+ggplot(data=working_w, aes(x=wagew, y=wageh , group=cut_interval(x=wagew, length=1))) + 
+  geom_boxplot()
+
+```
+
+Neither boxplots nor linear regression allow us to conclude anything about a precise relation between the wage of women and the one of their husband.
+
+
+
+# References
+[1] T. A. Mroz (1987) _The sensitivity of an empirical model of married women's hours of work to economic and statistical assumptions_. Econometrica 55, 765–799
+
